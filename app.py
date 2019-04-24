@@ -71,15 +71,25 @@ def process():
 @app.route('/article/<string:id>')
 def article(id):
     # Create cursor
-    cur = mysql.connection.cursor()
+    conn = mysql.connect
+    cur = conn.cursor()
+    # cur = mysql.connection.cursor()
 
     # Get articles
     #result = cur.execute("SELECT * FROM articles")
     # Show articles only from the user logged in 
     result = cur.execute("SELECT * FROM articles WHERE id = %s", [id])
-
+    # cur.execute("UPDATE articles SET visited = '20' WHERE id = %s", [id])
     article = cur.fetchone()
 
+    # visit = article['visited'] + 1
+    # app.logger.info(article['visited'])
+    # result = cur.execute("SELECT * FROM articles WHERE id = %s", [id])
+    # yeet = 0
+    # app.logger.info(yeet)
+    cur.execute("UPDATE articles SET visited = visited + 1 WHERE id = %s", [id])
+    conn.commit()
+    
     
     cur.close()
     return render_template('article.html', article=article)
@@ -307,11 +317,39 @@ def search_dailysmarty():
     # app.logger.info(text)
     results = requests.get(final_url) 
     results = results.json()['posts']
-    # app.logger.info(text)
+    # app.logger.info(results)
 
 
 
     return render_template('search_dailysmarty.html', results=results)
+
+@app.route('/Top_10')
+def Top_10():
+    # Create cursor
+    cur = mysql.connection.cursor()
+
+    # Get articles
+    #result = cur.execute("SELECT * FROM articles")
+    # Show articles only from the user logged in 
+    result = cur.execute("SELECT * FROM articles ORDER BY visited DESC LIMIT 10")
+
+    articles = cur.fetchall()
+    # for a in articles:
+    # temp = articles.json()
+    # app.logger.info(articles[0]['id'])
+    
+    data = []
+    for a in articles:
+        data.append([a['title'], a['visited']])
+
+
+    if result > 0:
+        return render_template('Top_10.html', articles=articles)
+    else:
+        msg = 'No Articles Found'
+        return render_template('Top_10.html', msg=msg)
+    # Close connection
+    cur.close()
 
 if __name__ == '__main__':
     app.secret_key='secret123'

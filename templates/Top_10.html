@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="jumbotron text-center">
+        <h1>Welcome to WEB PROJECT</h1>
+        <p class="lead">These are the articles</p>
+    </div>
+    <!-- <ul class="list-group"></ul> -->
+    <table class="table table-striped">
+            <tr>
+              <th>Title</th>
+              <th>Views</th>
+            </tr>
+        {% for article in articles %}
+            <!-- <li class="list-group-item"> <a href="article/{{article.id}}"> {{article.title}} </a></a> </li>
+            <li class="list-group-item"> <a href="article/{{article.id}}"> {{article.visited}} </a></a> </li> -->
+            <tr>
+                <td><a href="article/{{article.id}}"> {{article.title}} </a></a></td>
+                <td><a> {{article.visited}} </a></a></td>
+                
+            </tr>
+        {% endfor %}
+    <!-- </ul> -->
+</table>
+
+    
+
+
+    <center>
+        <h1>Top 10 visited articles</h1>     
+        <div id="piechart"></div>
+    </center>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+
+        
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+        var a0 = Number('{{articles[0].visited}}');
+        var a1 = Number('{{articles[1].visited}}');
+        var a2 = Number('{{articles[2].visited}}');
+        var a3 = Number('{{articles[3].visited}}');
+        var a4 = Number('{{articles[4].visited}}');
+        var a5 = Number('{{articles[5].visited}}');
+        var a6 = Number('{{articles[6].visited}}');
+        var a7 = Number('{{articles[7].visited}}');
+        var a8 = Number('{{articles[8].visited}}');
+        var a9 = Number('{{articles[9].visited}}');
+        
+        console.log(typeof 10)
+        function drawChart(yeet) {
+            var data = google.visualization.arrayToDataTable([
+            ['ID', 'Views'],
+            ['{{articles[0].title}}', a0],
+            ['{{articles[1].title}}', a1],
+            ['{{articles[2].title}}', a2],
+            ['{{articles[3].title}}', a3],
+            ['{{articles[4].title}}', a4],
+            ['{{articles[5].title}}', a5],
+            ['{{articles[6].title}}', a6],
+            ['{{articles[7].title}}', a7],
+            ['{{articles[8].title}}', a8],
+            ['{{articles[9].title}}', a9]
+        ]);
+        
+        var options = {'title':'Top 10 visited articles', 'width':700, 'height':550};
+    
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+    }
+    </script>
+{% endblock %}
